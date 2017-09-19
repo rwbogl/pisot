@@ -17,3 +17,51 @@ Python implementation will (eventually) provide a more accessible demonstration
 of the applications of symbollic computing.
 
 """
+
+import itertools
+import math
+
+class Pisot:
+
+    """
+    This class defines basic methods for dealing with Pisot sequences.
+
+    The Pisot sequence E_r(x, y) is defined by
+
+        a_0 = x
+        a_1 = y
+        a_{n + 1} = floor(a_{n - 1}**2 / a_{n - 2} + r).
+    """
+
+    def __iter__(self):
+        return self.terms()
+
+    def __init__(self, x, y, r):
+        """Create the Pisot sequence instance.
+
+        :x: First term in the sequence.
+        :y: Second term in the sequence.
+        :r: Pisot sequence parameter.
+
+        """
+        self.x = x
+        self.y = y
+        self.r = r
+
+    def get_terms(self, k):
+        """Compute the first k terms as a list."""
+        return list(itertools.islice(self.terms(), k))
+
+    def terms(self):
+        """Yield a generator of terms."""
+        yield self.x
+        yield self.y
+
+        back_2 = self.x
+        back_1 = self.y
+
+        while True:
+            new = math.floor(back_1 ** 2 / back_2 + self.r)
+            yield new
+
+            back_2, back_1 = back_1, new
