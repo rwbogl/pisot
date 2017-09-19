@@ -19,7 +19,7 @@ of the applications of symbollic computing.
 """
 
 import itertools
-import math
+import sympy
 
 class Pisot:
 
@@ -61,20 +61,14 @@ class Pisot:
         back_1 = self.y
 
         while True:
-            new = math.floor(back_1 ** 2 / back_2 + self.r)
+            new = sympy.floor(back_1 ** 2 / back_2 + self.r)
             yield new
 
             back_2, back_1 = back_1, new
 
 if __name__ == "__main__":
-    p = Pisot(1, 3, 1/2)
+    sympy.init_printing()
+    p = Pisot(sympy.E, sympy.pi, 1/2)
 
-    for term in p.get_terms(6):
-        print(term)
-
-    max_index = 6
-    for k, term in enumerate(p):
+    for k, term in enumerate(p.get_terms(6)):
         print("a[{}] = {}".format(k, term))
-
-        if k == max_index - 1:
-            break
