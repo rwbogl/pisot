@@ -65,3 +65,16 @@ class Pisot:
             yield new
 
             back_2, back_1 = back_1, new
+
+if __name__ == "__main__":
+    p = Pisot(1, 3, 1/2)
+
+    for term in p.get_terms(6):
+        print(term)
+
+    max_index = 6
+    for k, term in enumerate(p):
+        print("a[{}] = {}".format(k, term))
+
+        if k == max_index - 1:
+            break
