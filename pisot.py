@@ -20,8 +20,9 @@ of the applications of symbollic computing.
 
 import itertools
 import sympy
+from sympy.series.sequences import SeqBase
 
-class Pisot:
+class Pisot(SeqBase):
 
     """
     This class defines basic methods for dealing with Pisot sequences.
@@ -34,7 +35,7 @@ class Pisot:
     """
 
     def __iter__(self):
-        return self.terms()
+        return self.gen()
 
     def __init__(self, x, y, r):
         """Create the Pisot sequence instance.
@@ -48,11 +49,19 @@ class Pisot:
         self.y = y
         self.r = r
 
+    @property
+    def start(self):
+        return 0
+
+    @property
+    def stop(self):
+        return sympy.oo
+
     def get_terms(self, k):
         """Compute the first k terms as a list."""
-        return list(itertools.islice(self.terms(), k))
+        return list(itertools.islice(self.gen(), k))
 
-    def terms(self):
+    def gen(self):
         """Yield a generator of terms."""
         yield self.x
         yield self.y
@@ -65,6 +74,9 @@ class Pisot:
             yield new
 
             back_2, back_1 = back_1, new
+
+    def _eval_coeff(self, index):
+        return self.get_terms(index + 1)[-1]
 
 if __name__ == "__main__":
     sympy.init_printing()
