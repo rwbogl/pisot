@@ -90,6 +90,27 @@ class CFinite(SeqBase):
             del prevs[0]
             prevs.append(next)
 
+    def characteristic_poly(self, var=sympy.symbols("x")):
+        """
+        Create the characteristic polynomial of the recurrence relation in
+        `var`.
+
+        :var: Symbol to use as the polynomial's variable.
+        :returns: Sympy expression.
+
+        """
+        return (var**self.degree -
+                    sum(var ** (self.degree - k - 1) * self.coeffs[k]
+                            for k in range(self.degree)))
+
+    def characteristic_roots(self):
+        """Compute the roots of the characteristic equation.
+
+        :returns: List of roots returned by :mod:`sympy`.
+
+        """
+        return sympy.roots(self.characteristic_poly())
+
 def find_cfinite_recurrence(n_terms, seq):
     """
     Try to guess a C-finite recurrence of the given degree that the first
