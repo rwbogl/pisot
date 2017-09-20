@@ -6,14 +6,13 @@ Translation of (parts of) Doron Zeilberger's CFinite.txt from Maple to Python.
 
 This file contains classes and functions to do two things:
 
-1. Work with linear recurrence relations with constant coefficients.
+1. Work with linear recurrence relations with constant coefficients, called
+C-finite sequences or recurrences.
 
-2. Guess possible such recurrences given a list of terms.
-
-Linear recurrence relations with constant coefficients are also called C-finite
-sequences, hence the name of this file.
+2. Guess possible C-finite recurrences a given list of terms might satisfy.
 
 """
+
 import sympy
 import itertools
 from sympy.series.sequences import SeqBase
