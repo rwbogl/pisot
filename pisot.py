@@ -78,6 +78,47 @@ class Pisot(SeqBase):
     def _eval_coeff(self, index):
         return self.get_terms(index + 1)[-1]
 
+def pisot_root(c_seq):
+    """
+    Compute the absolute value of the second-largest root of the characteristic
+    equation for the C-finite sequence.
+
+    Zeilberger does additional things in this method. If there are repeated
+    roots, we return None. If 1 is the only root, we return None.
+
+    :arg c_seq: :class:`.CFinite` instance.
+
+    :returns: Floating point evaluation of the absolute value of the root, or
+              None.
+
+    """
+    roots = c_seq.characteristic_roots()
+    n_roots = sum(1 for root in roots.keys())
+
+    # Repeated roots.
+    if n_roots != c_seq.degree:
+        return None
+
+    if 1 in roots:
+        del roots[1]
+
+    # 1 is the only root.
+    if not roots:
+        return None
+
+    root_norms = [abs(root) for root in roots.keys()]
+
+    # Sometimes floating point arithmetic doesn't work how we want, so trim off
+    # the imaginary parts of the absolute value of a number.
+    root_norms = [sympy.re(sympy.N(norm)) for norm in root_norms]
+
+    # Delete the largest root, then return the (next) largest.
+    max_index = root_norms.index(max(root_norms))
+
+    del root_norms[max_index]
+
+    return max(root_norms)
+
 if __name__ == "__main__":
     sympy.init_printing()
     p = Pisot(sympy.E, sympy.pi, 1/2)
