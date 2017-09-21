@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pisot &#8212; pisot  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pisot</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Translation of Doron Zeilberger&#39;s Pisot.txt from Maple to Python.</span>
+
+<span class="sd">Pisot.txt is a Maple program that implements procedures to assist in the study</span>
+<span class="sd">of Pisot sequences. In particular, the highlight is its ability to discern (and</span>
+<span class="sd">prove!) whether or not a given Pisot sequence satisfies a linear recurrence</span>
+<span class="sd">relation with constant coefficients (up to all degree checked). To do this, it</span>
+<span class="sd">relies on the Maple program Cfinite.txt, also written by Zeilberger.</span>
+
+<span class="sd">Pisot.txt can be difficult to read. Due to its mathematical complexity it is a</span>
+<span class="sd">fairly large program. This is exacerbated by the fact that Maple, though useful</span>
+<span class="sd">in its domain, is not an elegant programming language. I hope that this Python</span>
+<span class="sd">implementation will (eventually) provide a more accessible demonstration of the</span>
+<span class="sd">applications of symbollic computing.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">sympy</span>
+<span class="kn">from</span> <span class="nn">sympy.series.sequences</span> <span class="k">import</span> <span class="n">SeqBase</span>
+<span class="kn">import</span> <span class="nn">cfinite</span>
+
+<div class="viewcode-block" id="Pisot"><a class="viewcode-back" href="../pisot.html#pisot.Pisot">[docs]</a><span class="k">class</span> <span class="nc">Pisot</span><span class="p">(</span><span class="n">SeqBase</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class defines basic methods for dealing with Pisot sequences.</span>
+
+<span class="sd">    The Pisot sequence E_r(x, y) is defined by</span>
+
+<span class="sd">        a_0 = x</span>
+<span class="sd">        a_1 = y</span>
+<span class="sd">        a_{n + 1} = floor(a_{n - 1}**2 / a_{n - 2} + r).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the Pisot sequence instance.</span>
+
+<span class="sd">        :x: First term in the sequence.</span>
+<span class="sd">        :y: Second term in the sequence.</span>
+<span class="sd">        :r: Pisot sequence parameter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start of sequence (0).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;End of sequence (:math:`\infty`).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">sympy</span><span class="o">.</span><span class="n">oo</span>
+
+<div class="viewcode-block" id="Pisot.get_terms"><a class="viewcode-back" href="../pisot.html#pisot.Pisot.get_terms">[docs]</a>    <span class="k">def</span> <span class="nf">get_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the first k terms as a list.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">(),</span> <span class="n">k</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Pisot.gen"><a class="viewcode-back" href="../pisot.html#pisot.Pisot.gen">[docs]</a>    <span class="k">def</span> <span class="nf">gen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Yield a generator of terms.&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="n">back_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">back_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">back_1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">back_2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">new</span>
+
+            <span class="n">back_2</span><span class="p">,</span> <span class="n">back_1</span> <span class="o">=</span> <span class="n">back_1</span><span class="p">,</span> <span class="n">new</span></div>
+
+    <span class="k">def</span> <span class="nf">_eval_coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_terms</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="pisot_root"><a class="viewcode-back" href="../pisot.html#pisot.pisot_root">[docs]</a><span class="k">def</span> <span class="nf">pisot_root</span><span class="p">(</span><span class="n">c_seq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the absolute value of the second-largest root of the characteristic</span>
+<span class="sd">    equation for the C-finite sequence.</span>
+
+<span class="sd">    Zeilberger does additional things in this method. If there are repeated</span>
+<span class="sd">    roots, we return None. If 1 is the only root, we return None.</span>
+
+<span class="sd">    :arg c_seq: :class:`.CFinite` instance.</span>
+
+<span class="sd">    :returns: Floating point evaluation of the absolute value of the root, or</span>
+<span class="sd">              None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">roots</span> <span class="o">=</span> <span class="n">c_seq</span><span class="o">.</span><span class="n">characteristic_roots</span><span class="p">()</span>
+    <span class="n">n_roots</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">roots</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># Repeated roots.</span>
+    <span class="k">if</span> <span class="n">n_roots</span> <span class="o">!=</span> <span class="n">c_seq</span><span class="o">.</span><span class="n">degree</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">roots</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># 1 is the only root.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">roots</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">root_norms</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">roots</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+
+    <span class="c1"># Sometimes floating point arithmetic doesn&#39;t work how we want, so trim off</span>
+    <span class="c1"># the imaginary parts of the absolute value of a number.</span>
+    <span class="n">root_norms</span> <span class="o">=</span> <span class="p">[</span><span class="n">sympy</span><span class="o">.</span><span class="n">re</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">N</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span> <span class="k">for</span> <span class="n">norm</span> <span class="ow">in</span> <span class="n">root_norms</span><span class="p">]</span>
+
+    <span class="c1"># Delete the largest root, then return the (next) largest.</span>
+    <span class="n">max_index</span> <span class="o">=</span> <span class="n">root_norms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">root_norms</span><span class="p">))</span>
+
+    <span class="k">del</span> <span class="n">root_norms</span><span class="p">[</span><span class="n">max_index</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">root_norms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="pisot_to_cfinite"><a class="viewcode-back" href="../pisot.html#pisot.pisot_to_cfinite">[docs]</a><span class="k">def</span> <span class="nf">pisot_to_cfinite</span><span class="p">(</span><span class="n">pisot</span><span class="p">,</span> <span class="n">guess_length</span><span class="p">,</span> <span class="n">check_length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the given Pisot sequence satisfies a linear recurrence relation</span>
+<span class="sd">    with finite coefficients.</span>
+
+<span class="sd">    :pisot: :class:`.Pisot` sequence.</span>
+<span class="sd">    :guess_length: Number of terms to use when guessing the recurrence. This</span>
+<span class="sd">                   should be somewhat small. If the sequence fails to satisfy a</span>
+<span class="sd">                   linear recurrence at a large number, then this method will</span>
+<span class="sd">                   spend a long time trying to look for one.</span>
+<span class="sd">    :check_length: Number of terms of the sequence to check the conjectured</span>
+<span class="sd">                    linear recurrence for. This should be a large number.</span>
+
+<span class="sd">    :returns: A :class:`.CFinite` instance, or None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">pisot</span><span class="o">.</span><span class="n">r</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pisot</span><span class="o">.</span><span class="n">r</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;r must be strictly between 0 and 1 for this procedure&quot;</span><span class="p">)</span>
+
+    <span class="n">c_seq</span> <span class="o">=</span> <span class="n">cfinite</span><span class="o">.</span><span class="n">find_cfinite_recurrence</span><span class="p">(</span><span class="n">pisot</span><span class="p">,</span> <span class="n">guess_length</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">c_seq</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">check_p</span> <span class="o">=</span> <span class="n">pisot</span><span class="o">.</span><span class="n">get_terms</span><span class="p">(</span><span class="n">check_length</span><span class="p">)</span>
+    <span class="n">check_c</span> <span class="o">=</span> <span class="n">c_seq</span><span class="o">.</span><span class="n">get_terms</span><span class="p">(</span><span class="n">check_length</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">check_p</span> <span class="o">!=</span> <span class="n">check_c</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">root_abs</span> <span class="o">=</span> <span class="n">pisot_root</span><span class="p">(</span><span class="n">c_seq</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">root_abs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">c_seq</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sympy</span><span class="o">.</span><span class="n">init_printing</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mi">17</span>
+    <span class="c1"># Note the use of sympy.Rational here. If we just used (floating point)</span>
+    <span class="c1"># 1/2, the arithmetic breaks down once things get large.</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">Rational</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Pisot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="n">n_terms</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">check_terms</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">c_seq</span> <span class="o">=</span> <span class="n">pisot_to_cfinite</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">n_terms</span><span class="p">,</span> <span class="n">check_terms</span><span class="p">)</span>
+
+    <span class="c1"># I&#39;m sorry about the triple braces.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Pisot sequence E_{{</span><span class="si">{}</span><span class="s2">}}(</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">),&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;whose first few terms are&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_terms</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">c_seq</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;satisfies the linear recurrence with constant coefficients&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c_seq</span><span class="o">.</span><span class="n">coeffs</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;and initial values&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c_seq</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;does not satisfy any linear recurrence with constant coefficients, up to degree </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_terms</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">pisot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Robert Dougherty-Bliss.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

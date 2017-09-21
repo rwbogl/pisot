@@ -1,0 +1,214 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pisot module &#8212; pisot  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="cfinite module" href="cfinite.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pisot">
+<span id="pisot-module"></span><h1>pisot module<a class="headerlink" href="#module-pisot" title="Permalink to this headline">¶</a></h1>
+<p>Translation of Doron Zeilberger’s Pisot.txt from Maple to Python.</p>
+<p>Pisot.txt is a Maple program that implements procedures to assist in the study
+of Pisot sequences. In particular, the highlight is its ability to discern (and
+prove!) whether or not a given Pisot sequence satisfies a linear recurrence
+relation with constant coefficients (up to all degree checked). To do this, it
+relies on the Maple program Cfinite.txt, also written by Zeilberger.</p>
+<p>Pisot.txt can be difficult to read. Due to its mathematical complexity it is a
+fairly large program. This is exacerbated by the fact that Maple, though useful
+in its domain, is not an elegant programming language. I hope that this Python
+implementation will (eventually) provide a more accessible demonstration of the
+applications of symbollic computing.</p>
+<dl class="class">
+<dt id="pisot.Pisot">
+<em class="property">class </em><code class="descclassname">pisot.</code><code class="descname">Pisot</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pisot.html#Pisot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pisot.Pisot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sympy.series.sequences.SeqBase</span></code></p>
+<p>This class defines basic methods for dealing with Pisot sequences.</p>
+<p>The Pisot sequence E_r(x, y) is defined by</p>
+<blockquote>
+<div>a_0 = x
+a_1 = y
+a_{n + 1} = floor(a_{n - 1}**2 / a_{n - 2} + r).</div></blockquote>
+<dl class="attribute">
+<dt id="pisot.Pisot.default_assumptions">
+<code class="descname">default_assumptions</code><em class="property"> = {'commutative': True}</em><a class="headerlink" href="#pisot.Pisot.default_assumptions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pisot.Pisot.gen">
+<code class="descname">gen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pisot.html#Pisot.gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pisot.Pisot.gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield a generator of terms.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pisot.Pisot.get_terms">
+<code class="descname">get_terms</code><span class="sig-paren">(</span><em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pisot.html#Pisot.get_terms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pisot.Pisot.get_terms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the first k terms as a list.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pisot.Pisot.is_commutative">
+<code class="descname">is_commutative</code><em class="property"> = True</em><a class="headerlink" href="#pisot.Pisot.is_commutative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pisot.Pisot.start">
+<code class="descname">start</code><a class="headerlink" href="#pisot.Pisot.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start of sequence (0).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pisot.Pisot.stop">
+<code class="descname">stop</code><a class="headerlink" href="#pisot.Pisot.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>End of sequence (<span class="math">\(\infty\)</span>).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pisot.pisot_root">
+<code class="descclassname">pisot.</code><code class="descname">pisot_root</code><span class="sig-paren">(</span><em>c_seq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pisot.html#pisot_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pisot.pisot_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the absolute value of the second-largest root of the characteristic
+equation for the C-finite sequence.</p>
+<p>Zeilberger does additional things in this method. If there are repeated
+roots, we return None. If 1 is the only root, we return None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>c_seq</strong> – <a class="reference internal" href="cfinite.html#cfinite.CFinite" title="cfinite.CFinite"><code class="xref py py-class docutils literal"><span class="pre">CFinite</span></code></a> instance.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Floating point evaluation of the absolute value of the root, or
+None.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pisot.pisot_to_cfinite">
+<code class="descclassname">pisot.</code><code class="descname">pisot_to_cfinite</code><span class="sig-paren">(</span><em>pisot</em>, <em>guess_length</em>, <em>check_length</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pisot.html#pisot_to_cfinite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pisot.pisot_to_cfinite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the given Pisot sequence satisfies a linear recurrence relation
+with finite coefficients.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Pisot:</th><td class="field-body"><a class="reference internal" href="#pisot.Pisot" title="pisot.Pisot"><code class="xref py py-class docutils literal"><span class="pre">Pisot</span></code></a> sequence.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Guess_length:</th><td class="field-body">Number of terms to use when guessing the recurrence. This
+should be somewhat small. If the sequence fails to satisfy a
+linear recurrence at a large number, then this method will
+spend a long time trying to look for one.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Check_length:</th><td class="field-body">Number of terms of the sequence to check the conjectured
+linear recurrence for. This should be a large number.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="cfinite.html#cfinite.CFinite" title="cfinite.CFinite"><code class="xref py py-class docutils literal"><span class="pre">CFinite</span></code></a> instance, or None.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pisot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cfinite.html">cfinite module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pisot module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Modules</a><ul>
+      <li>Previous: <a href="cfinite.html" title="previous chapter">cfinite module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Robert Dougherty-Bliss.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/pisot.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
