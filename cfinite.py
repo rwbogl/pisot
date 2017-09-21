@@ -24,9 +24,9 @@ class CFinite(SeqBase):
     This class provides procedures for working with linear recurrence relations
     with constant coefficients, called C-finite sequences.
 
-    We inhereit from sympy's SeqBase class, though our use is not currently
-    (2017-09-20) optimized for recursion. (This goes for pisot.py as well.)
-    SeqBase uses symoy's @cacheit decorator, which we should try to take
+    We inhereit from sympy's :class:`.SeqBase` class, though our use is not
+    currently (2017-09-20) optimized for recursion. (This goes for pisot.py as
+    well.) SeqBase uses sympy's @cacheit decorator, which we should try to take
     advantage of for recurrences.  (For example, after computing
     CFinite.coeff(100), CFinite.coeff(99) is not cached.)
 
@@ -52,10 +52,12 @@ class CFinite(SeqBase):
 
     @property
     def start(self):
+        """Start of sequence (0)."""
         return 0
 
     @property
     def stop(self):
+        """End of sequence (:math:`\infty`)."""
         return sympy.oo
 
     def _eval_coeff(self, index):
@@ -81,8 +83,8 @@ class CFinite(SeqBase):
         prevs = list(self.initial)
 
         while True:
-            # prev[k] is the term a_{n - d + k} = a_{n - (d - k)}, so we need to
-            # multiply it by c_{d - k - 1}.
+            # prev[k] is the term a_{n - d + k} = a_{n - (d - k)}, so we need
+            # to multiply it by c_{d - k - 1}.
             next = sum(prevs[k] * self.coeffs[self.degree - k - 1]
                         for k in range(self.degree))
             yield next

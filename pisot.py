@@ -52,10 +52,12 @@ class Pisot(SeqBase):
 
     @property
     def start(self):
+        """Start of sequence (0)."""
         return 0
 
     @property
     def stop(self):
+        """End of sequence (:math:`\infty`)."""
         return sympy.oo
 
     def get_terms(self, k):
