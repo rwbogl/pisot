@@ -111,7 +111,7 @@ class CFinite(SeqBase):
         """
         return sympy.roots(self.characteristic_poly())
 
-def find_cfinite_recurrence(n_terms, seq):
+def find_cfinite_recurrence(seq, n_terms):
     """
     Try to guess a C-finite recurrence of the given degree that the first
     n_terms terms might satisfy, using sympy's find_linear_recurrence()

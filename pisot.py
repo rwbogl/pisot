@@ -21,6 +21,7 @@ applications of symbollic computing.
 import itertools
 import sympy
 from sympy.series.sequences import SeqBase
+import cfinite
 
 class Pisot(SeqBase):
 
@@ -119,9 +120,63 @@ def pisot_root(c_seq):
 
     return max(root_norms)
 
+def pisot_to_cfinite(pisot, guess_length, check_length):
+    """
+    Check if the given Pisot sequence satisfies a linear recurrence relation
+    with finite coefficients.
+
+    :pisot: :class:`.Pisot` sequence.
+    :guess_length: Number of terms to use when guessing the recurrence. This
+                   should be somewhat small. If the sequence fails to satisfy a
+                   linear recurrence at a large number, then this method will
+                   spend a long time trying to look for one.
+    :check_length: Number of terms of the sequence to check the conjectured
+                    linear recurrence for. This should be a large number.
+
+    :returns: A :class:`.CFinite` instance, or None.
+
+    """
+    if pisot.r <= 0 or pisot.r >= 1:
+        raise ValueError("r must be strictly between 0 and 1 for this procedure")
+
+    c_seq = cfinite.find_cfinite_recurrence(pisot, guess_length)
+
+    if not c_seq:
+        return None
+
+    check_p = pisot.get_terms(check_length)
+    check_c = c_seq.get_terms(check_length)
+
+    if check_p != check_c:
+        return None
+
+    root_abs = pisot_root(c_seq)
+
+    if root_abs > 1:
+        return None
+
+    return c_seq
+
 if __name__ == "__main__":
     sympy.init_printing()
-    p = Pisot(sympy.E, sympy.pi, 1/2)
+    x = 5
+    y = 17
+    # Note the use of sympy.Rational here. If we just used (floating point)
+    # 1/2, the arithmetic breaks down once things get large.
+    r = sympy.Rational(1, 2)
+    p = Pisot(x, y, r)
+    n_terms = 10
+    check_terms = 1000
+    c_seq = pisot_to_cfinite(p, n_terms, check_terms)
 
-    for k, term in enumerate(p.get_terms(6)):
-        print("a[{}] = {}".format(k, term))
+    # I'm sorry about the triple braces.
+    print("The Pisot sequence E_{{{}}}({}, {}),".format(r, x, y), end=" ")
+    print("whose first few terms are")
+    print("\t" + str(p.get_terms(10)) + ",")
+    if c_seq:
+        print("satisfies the linear recurrence with constant coefficients")
+        print("\t" + str(c_seq.coeffs))
+        print("and initial values")
+        print("\t" + str(c_seq.initial) + ".")
+    else:
+        print("does not satisfy any linear recurrence with constant coefficients, up to degree {}.".format(n_terms // 2))
