@@ -28,15 +28,45 @@ article <https://arxiv.org/abs/1609.05570>`_ by Zeilberger and Neil Sloane. It
 is my hope that this Python implementation provides a more accessible example
 of the uses of symbollic computation in languages more general than Maple.
 
+Use
+===
+
+The highlight of the package is :func:`~pisot.pisot_to_cfinite`. Given a
+:class:`~pisot.Pisot` instance, it tries to determine whether or not it
+satisfies a linear recurrence relation with constant coefficients.
+
 Example::
 
-	$ python3 ./pisot.py 
-	The Pisot sequence E_{1/2}(5, 17), whose first few terms are
-		[5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616],
-	satisfies the linear recurrence with constant coefficients
-		[4, -2]
-	and initial values
-		[5, 17].
+    In [1]: import pisot
+
+    In [2]: from sympy import Rational
+
+    In [3]: p = pisot.Pisot(5, 17, Rational(1, 2))
+
+    In [4]: guess_terms = 10
+
+    In [5]: check_terms = 1000
+
+    In [6]: pisot.pisot_to_cfinite(p, guess_terms, check_terms)
+    Out[6]: CFinite([5, 17], [4, -2])
+
+    In [7]: c = _
+
+    In [8]: c.get_terms(10)
+    Out[8]: [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616]
+
+    In [9]: p.get_terms(10)
+    Out[9]: [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616]
+
+Or, a more verbose example::
+
+    $ python3 ./pisot.py 
+    The Pisot sequence E_{1/2}(5, 17), whose first few terms are
+        [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616],
+    satisfies the linear recurrence with constant coefficients
+        [4, -2]
+    and initial values
+        [5, 17].
 
 .. toctree::
     :maxdepth: 2
