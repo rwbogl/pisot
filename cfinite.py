@@ -60,6 +60,11 @@ class CFinite(SeqBase):
         """End of sequence (:math:`\infty`)."""
         return sympy.oo
 
+    @property
+    def interval(self):
+        """Interval on which sequence is defined ((0, :math:`\infty`))."""
+        return (0, sympy.oo)
+
     def _eval_coeff(self, index):
         return self.get_terms(index + 1)[-1]
 

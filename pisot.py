@@ -60,6 +60,11 @@ class Pisot(SeqBase):
         """End of sequence (:math:`\infty`)."""
         return sympy.oo
 
+    @property
+    def interval(self):
+        """Interval on which sequence is defined ((0, :math:`\infty`))."""
+        return (0, sympy.oo)
+
     def get_terms(self, k):
         """Compute the first k terms as a list."""
         return list(itertools.islice(self.gen(), k))
