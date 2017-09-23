@@ -89,10 +89,11 @@ class Pisot(SeqBase):
 def pisot_root(c_seq):
     """
     Compute the absolute value of the second-largest root of the characteristic
-    equation for the C-finite sequence.
+    equation for the C-finite sequence, excluding any possible "1"s. It is
+    assumed that the single root case is handled before calling this.
 
     Zeilberger does additional things in this method. If there are repeated
-    roots, we return None. If 1 is the only root, we return None.
+    roots, we return None.
 
     :arg c_seq: :class:`.CFinite` instance.
 
@@ -132,6 +133,30 @@ def pisot_to_cfinite(pisot, guess_length, check_length):
     Check if the given Pisot sequence satisfies a linear recurrence relation
     with finite coefficients.
 
+    We "correct" (I have not yet tried the single root case) the behavior of
+    Pisot.txt as follows:
+
+    Let p be the single coefficient. Then, the conjectured form is :math:`a_n =
+    p a_{n - 1}`, or :math:`a_n = p^n x`. Rewritten, the conjecture is that
+    :math:`a_n = b_n`, where :math:`b_n = p^n x` for some real p. This is true
+    iff
+
+    .. math::
+
+        p^n x = floor(p^n x + r),
+
+    which holds iff 0 <= r < 1.
+
+    That is, if it looks like the sequence is a trivial geometric sequence,
+    then it is as long as 0 <= r < 1.
+
+    More formally: If :math:`y / x = p`, :math:`p^n x` is an integer for all
+    nonnegative integers n, and 0 <= r < 1, then :math:`E_r(x, y)` is given by
+    :math:`a_n = p^n x`.
+
+    As an important special case, if :math:`x` divides :math:`y` and 0 <= r <
+    1, then this is true. We only handle this case.
+
     :pisot: :class:`.Pisot` sequence.
     :guess_length: Number of terms to use when guessing the recurrence. This
                    should be somewhat small. If the sequence fails to satisfy a
@@ -150,6 +175,19 @@ def pisot_to_cfinite(pisot, guess_length, check_length):
 
     if not c_seq:
         return None
+
+    if c_seq.degree == 1:
+        p = c_seq.coeffs[0]
+        if p <= 1:
+            # By the Theorem in Ekhad et. al, one root must be outside of the
+            # unit circle. Thus, if this is the only one we can find, the
+            # sequences can't agree.
+            return None
+
+        if sympy.floor(p) != p:
+            raise ValueError("If the conjecture is of degree 1, we only handle the case where the coefficient is an integer")
+
+        return c_seq
 
     check_p = pisot.get_terms(check_length)
     check_c = c_seq.get_terms(check_length)
