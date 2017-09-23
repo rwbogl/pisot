@@ -28,11 +28,17 @@ class Pisot(SeqBase):
     """
     This class defines basic methods for dealing with Pisot sequences.
 
-    The Pisot sequence E_r(x, y) is defined by
+    The Pisot sequence :math:`E_r(x, y)` is defined by
 
-        a_0 = x
-        a_1 = y
-        a_{n + 1} = floor(a_{n - 1}**2 / a_{n - 2} + r).
+    .. math::
+
+        \begin{align*}
+            a_0 &= x \\
+            a_1 &= y \\
+            a_{n + 1} &= floor(a_{n - 1}**2 / a_{n - 2} + r),
+        \end{align*}
+
+    where :math:`0 < x < y` are integers, and :math:`r` is some constant.
     """
 
     def __iter__(self):
