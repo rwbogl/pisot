@@ -2635,6 +2635,21 @@ end:
 
 
 
+# How does this procedure handle only one root that is not equal to one? I
+# believe that it would fail, but I have not tried it.
+
+# Sketch of result for single root:
+#   The conjecture is that a_n = b_n, where b_n = p^n x for some real p.
+#   This is true iff
+#       p^n x = floor(p^n x + r),
+#   which holds iff 0 <= r < 1.
+
+# That is, if it looks like the sequence is a trivial geometric sequence, then
+# it probably is, as long as r < 1.
+
+# More formally: If y / x = p, p^n x is an integer for all nonnegative integers
+# n, and 0 <= r < 1, then E_r(x, y) is given by a_n = p^n x.
+
 #Pis(C): Inputs a C-finite sequence and outputs the absolute value of the second-largest root
 #It is a Pisot number if it is less than 1.
 #Fis([[1,1],[1,1]]);
