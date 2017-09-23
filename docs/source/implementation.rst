@@ -32,10 +32,10 @@ contains the roots, then the following Maple snippet accomplishes this task::
     fi:
     fi:
 
-Perhaps this is an obvious design pattern to an experienced Maple programmer.
-To my eyes, there is a cognitive barrier between what is being done (removing
-the root 1) and what is being written (convert lists to sets and doing set
-subtraction and then converting back to lists).
+Perhaps this is an obvious design pattern to an experienced Maple programmer,
+but to my eyes, there is a cognitive barrier between what we want to do (remove
+the root 1) and what is being deon (convert a list to a set, perform set
+subtraction, and then converting the result back to a list).
 
 If ``roots`` is a dictionary of roots, then in Python the same task can be
 accomplished as::
