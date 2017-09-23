@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Automated Proof of Linear Recurrences Satisfied by Pisot Sequences with Python
+Pisot Documentation
 ==============================================================================
 
 .. warning::
@@ -29,7 +29,7 @@ is my hope that this Python implementation provides a more accessible example
 of the uses of symbollic computation in languages more general than Maple.
 
 Use
-===
+---
 
 The highlight of the package is :func:`~pisot.pisot_to_cfinite`. Given a
 :class:`~pisot.Pisot` instance, it tries to determine whether or not it
