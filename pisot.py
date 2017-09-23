@@ -96,7 +96,7 @@ def pisot_root(c_seq):
 
     """
     roots = c_seq.characteristic_roots()
-    n_roots = sum(1 for root in roots.keys())
+    n_roots = len(roots.keys())
 
     # Repeated roots.
     if n_roots != c_seq.degree:
