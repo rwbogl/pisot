@@ -72,6 +72,7 @@ Or, a more verbose example::
     :maxdepth: 2
     :caption: Contents:
 
+    implementation
     modules
 
 Indices and tables
