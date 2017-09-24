@@ -132,7 +132,7 @@ def pisot_root(c_seq):
 
     return max(root_norms)
 
-def pisot_to_cfinite(pisot, guess_length, check_length):
+def pisot_to_cfinite(pisot, guess_length, check_length, verbose=False):
     """
     Check if the given Pisot sequence satisfies a linear recurrence relation
     with finite coefficients.
@@ -172,38 +172,78 @@ def pisot_to_cfinite(pisot, guess_length, check_length):
     :returns: A :class:`.CFinite` instance, or None.
 
     """
+    # Create a toggled verbose logger.
+    if verbose:
+        def vprint(*args, **kwargs):
+            print(*args, **kwargs)
+    else:
+        def vprint(*args, **kwargs):
+            pass
+
     if pisot.r <= 0 or pisot.r >= 1:
         raise ValueError("r must be strictly between 0 and 1 for this procedure")
 
     c_seq = cfinite.find_cfinite_recurrence(pisot, guess_length)
 
+    vprint("The Pisot sequence E_{{{}}}({}, {}),".format(pisot.r, pisot.x, pisot.y), end=" ")
+    vprint("whose first few terms are")
+    vprint("\t" + str(pisot.get_terms(10)) + ",")
+
     if not c_seq:
+        vprint("does not satisfy any C-finite recurrence up of degree <= {}.".format(min(degree, guess_terms // 2)))
+        vprint("It is still possible that the sequence does satisfy some C-finite recurrence of a higher degree.")
+        vprint("Try checking more terms!")
         return None
 
+    vprint("appears to satisfy the C-finite recurrence", c_seq, end=" ")
+    vprint("whose first few terms are")
+    vprint("\t" + str(c_seq.get_terms(10)) + ",")
+    vprint()
+
     if c_seq.degree == 1:
+        vprint("This C-finite sequence looks like a geometric sequence, so this is easier to check.")
+        vprint("The conjecture holds if x divides y, the guessed ratio equals y / x and r is in [0, 1).")
+        vprint()
+
+        vprint("We already know that r satisfies this.")
+
         p = c_seq.coeffs[0]
         if p <= 1:
             # By the Theorem in Ekhad et. al, one root must be outside of the
             # unit circle. Thus, if this is the only one we can find, the
             # sequences can't agree.
+            vprint("However, since r is in (0, 1), and the only root of the characteristic equation is", p, "<= 1, this conjecture cannot hold.")
             return None
 
+        vprint("The conjectured geometric sequence has ratio {}.".format(p))
+        vprint()
+
         if sympy.floor(p) != p:
+            vprint("We only support the case where this ratio is an integer, which it doesn't seem to be.")
+            vprint("The sequence _might_ still satisfy a C-finite recurrence, but we have nothing else to say about it.")
+            vprint("(To be honest, I suspect that it doesn't, but don't quote me on that.)")
             raise ValueError("If the conjecture is of degree 1, we only handle the case where the coefficient is an integer")
 
-        return c_seq
+        if sympy.simplify(pisot.y - p * pisot.x) == 0:
+            vprint("The ratio is an integer and equals y / x, so our conjecture holds.")
+            return c_seq
 
     check_p = pisot.get_terms(check_length)
     check_c = c_seq.get_terms(check_length)
 
     if check_p != check_c:
+        vprint("However, in checking the first {} terms of both, we find one that disagrees.")
         return None
 
     root_abs = pisot_root(c_seq)
 
     if root_abs > 1:
+        vprint("However, the absolute value of the second-largest root of the C-finite sequence is", root_abs, "> 1.")
+        vprint("Thus, the C-finite sequence cannot be a Pisot sequence.")
         return None
 
+    vprint("The absolute value of the second-largest root of the C-finite sequence is", root_abs, "<= 1.")
+    vprint("Therefore our conjecture holds.")
     return c_seq
 
 if __name__ == "__main__":
@@ -216,16 +256,4 @@ if __name__ == "__main__":
     p = Pisot(x, y, r)
     n_terms = 10
     check_terms = 1000
-    c_seq = pisot_to_cfinite(p, n_terms, check_terms)
-
-    # I'm sorry about the triple braces.
-    print("The Pisot sequence E_{{{}}}({}, {}),".format(r, x, y), end=" ")
-    print("whose first few terms are")
-    print("\t" + str(p.get_terms(10)) + ",")
-    if c_seq:
-        print("satisfies the linear recurrence with constant coefficients")
-        print("\t" + str(c_seq.coeffs))
-        print("and initial values")
-        print("\t" + str(c_seq.initial) + ".")
-    else:
-        print("does not satisfy any linear recurrence with constant coefficients, up to degree {}.".format(n_terms // 2))
+    c_seq = pisot_to_cfinite(p, n_terms, check_terms, verbose=True)
