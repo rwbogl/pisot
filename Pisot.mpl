@@ -2638,6 +2638,13 @@ end:
 # How does this procedure handle only one root that is not equal to one? I
 # believe that it would fail, but I have not tried it.
 
+# Update: I checked it with Maple. In Maple, max([]) is -infinity, so that
+# everything (other than -infinity itself) is larger than the largest element
+# in []. This leads us to conclude the same thing about first order
+# conjectures, because their "second largest root" is -infinity, and to
+# conjecture it we need the geometric ratio to be y / x anyway. Nifty stuff.
+# This could be translated over to Python, but I prefer handling it separately.
+
 # Sketch of result for single root:
 #   The conjecture is that a_n = b_n, where b_n = p^n x for some real p.
 #   This is true iff
