@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 
 """
-Translation of (parts of) Doron Zeilberger's CFinite.txt from Maple to Python.
-
-This file contains classes and functions to do two things:
+This module is a translation of (parts of) Doron Zeilberger's CFinite.txt from
+Maple to Python. It contains classes and functions to do two things:
 
 1. Work with linear recurrence relations with constant coefficients, called
 C-finite sequences or recurrences.
 
 2. Guess possible C-finite recurrences a given list of terms might satisfy.
+
+Code to do the second item already exists in sympy, but I thought it would be
+fun to write it again.
 
 """
 
