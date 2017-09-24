@@ -190,7 +190,7 @@ def pisot_to_cfinite(pisot, guess_length, check_length, verbose=False):
     vprint("\t" + str(pisot.get_terms(10)) + ",")
 
     if not c_seq:
-        vprint("does not satisfy any C-finite recurrence up of degree <= {}.".format(min(degree, guess_terms // 2)))
+        vprint("does not satisfy any C-finite recurrence up to degree <= {}.".format(guess_length // 2))
         vprint("It is still possible that the sequence does satisfy some C-finite recurrence of a higher degree.")
         vprint("Try checking more terms!")
         return None
