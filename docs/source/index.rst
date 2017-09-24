@@ -35,9 +35,6 @@ article <https://arxiv.org/abs/1609.05570>`_ by Zeilberger and Neil Sloane. It
 is my hope that this Python implementation provides a more accessible example
 of the uses of symbolic computation in languages more general than Maple.
 
-Use
----
-
 To use the package, ensure that `SymPy <http://www.sympy.org/en/index.html>`_
 is installed, then clone the `GitHub project
 <https://github.com/rwbogl/pisot>`_ (via ``git clone``, or downloading a ZIP
@@ -46,6 +43,9 @@ file from the page, etc.). On the terminal, navigate to the directory that
 this, import the ``pisot`` module with :code:`import pisot` or some variant.
 Then every function defined in ``pisot.py`` will be available as
 ``pisot.func_name``.
+
+Examples
+--------
 
 The highlight of the package is :func:`~pisot.pisot_to_cfinite`. Given a
 :class:`~pisot.Pisot` instance, it tries to determine whether or not it
@@ -102,6 +102,24 @@ Or, using the ``verbose`` flag::
 
     The ratio is an integer and equals y / x, so our conjecture holds.
     Out[12]: CFinite([8], [2])
+
+Classes
+-------
+
+We define the classes :class:`pisot.Pisot` and :class:`cfinite.CFinite`. These
+inherit from :class:`.SeqBase`, so they are fully-fledged sequences that can be
+used in SymPy. The classes encapsulate some important operations and properties
+of C-finite and Pisot sequences, namely:
+
+- Computing lists of terms is done with :meth:`.Pisot.get_terms` and
+  :meth:`.CFinite.get_terms`.
+
+- For CFinite sequences, the characteristic polynomial is computed with
+  :meth:`.CFinite.characteristic_poly`, and its roots with
+  :meth:`.CFinite.characteristic_roots`.
+
+- Guessing a linear recurrence with constant coefficients can be done with
+  :meth:`.Pisot.find_cfinite_recurrence`.
 
 Indices and tables
 ==================
