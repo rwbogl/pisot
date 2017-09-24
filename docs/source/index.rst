@@ -10,6 +10,13 @@ Pisot Documentation
    These modules are under development. They may be error-prone, give incorrect
    answers, and be generally terrible.
 
+.. toctree::
+    :hidden:
+
+    implementation
+    modules
+
+
 Pisot sequences are a family of recursive sequences defined by
 
 .. math::
@@ -26,10 +33,19 @@ work is a translation of Doron Zeilberger's Maple package `Pisot.txt
 <http://sites.math.rutgers.edu/~zeilberg/tokhniot/Pisot.txt>`_, based on `this
 article <https://arxiv.org/abs/1609.05570>`_ by Zeilberger and Neil Sloane. It
 is my hope that this Python implementation provides a more accessible example
-of the uses of symbollic computation in languages more general than Maple.
+of the uses of symbolic computation in languages more general than Maple.
 
 Use
 ---
+
+To use the package, ensure that `SymPy <http://www.sympy.org/en/index.html>`_
+is installed, then clone the `GitHub project
+<https://github.com/rwbogl/pisot>`_ (via ``git clone``, or downloading a ZIP
+file from the page, etc.). On the terminal, navigate to the directory that
+``pisot.py`` and ``cfinite.py`` are in, then open a Python terminal. After
+this, import the ``pisot`` module with :code:`import pisot` or some variant.
+Then every function defined in ``pisot.py`` will be available as
+``pisot.func_name``.
 
 The highlight of the package is :func:`~pisot.pisot_to_cfinite`. Given a
 :class:`~pisot.Pisot` instance, it tries to determine whether or not it
@@ -47,10 +63,10 @@ Example::
 
     In [5]: check_terms = 1000
 
-    In [6]: pisot.pisot_to_cfinite(p, guess_terms, check_terms)
-    Out[6]: CFinite([5, 17], [4, -2])
+    In [6]: c = pisot.pisot_to_cfinite(p, guess_terms, check_terms)
 
-    In [7]: c = _
+    In [7]: c
+    Out[7]: CFinite([5, 17], [4, -2])
 
     In [8]: c.get_terms(10)
     Out[8]: [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616]
@@ -58,22 +74,17 @@ Example::
     In [9]: p.get_terms(10)
     Out[9]: [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616]
 
-Or, a more verbose example::
+Or, using the ``verbose`` flag::
 
-    $ python3 ./pisot.py 
+    In [10]: pisot.pisot_to_cfinite(p, guess_terms, check_terms, verbose=True)
     The Pisot sequence E_{1/2}(5, 17), whose first few terms are
         [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616],
-    satisfies the linear recurrence with constant coefficients
-        [4, -2]
-    and initial values
-        [5, 17].
+    appears to satisfy the C-finite recurrence CFinite([5, 17], [4, -2]) whose first few terms are
+        [5, 17, 58, 198, 676, 2308, 7880, 26904, 91856, 313616],
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Contents:
-
-    implementation
-    modules
+    The absolute value of the second-largest root of the C-finite sequence is 0.585786437626905 <= 1.
+    Therefore our conjecture holds.
+    Out[10]: CFinite([5, 17], [4, -2])
 
 Indices and tables
 ==================
