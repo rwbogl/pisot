@@ -6,10 +6,6 @@
 Pisot Documentation
 ==============================================================================
 
-.. warning::
-   These modules are under development. They may be error-prone, give incorrect
-   answers, and be generally terrible.
-
 .. toctree::
     :hidden:
 
