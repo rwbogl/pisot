@@ -120,25 +120,6 @@ class CFinite(SeqBase):
         """
         return sympy.roots(self.characteristic_poly())
 
-def find_cfinite_recurrence(seq, n_terms):
-    """
-    Try to guess a C-finite recurrence of the given degree that the first
-    n_terms terms might satisfy, using sympy's find_linear_recurrence()
-    function.
-
-    :n_terms: Number of terms to check.
-    :seq: Sympy sequence.
-    :returns: A CFinite instance or None.
-
-    """
-    coeffs = seq.find_linear_recurrence(n_terms)
-
-    if coeffs:
-        initial = list(itertools.islice(seq.gen(), len(coeffs)))
-        return CFinite(initial, coeffs)
-
-    return None
-
 def guess_cfinite_degree(terms, degree):
     """
     Try to guess a C-finite recurrence of the given degree that the terms might

@@ -84,9 +84,28 @@ class Pisot(SeqBase):
 
         while True:
             new = sympy.floor(back_1 ** 2 / back_2 + self.r)
+
             yield new
 
             back_2, back_1 = back_1, new
+
+    def find_cfinite_recurrence(self, n_terms):
+        """
+        Try to guess a C-finite recurrence of the given degree that the first
+        n_terms terms might satisfy, using sympy's find_linear_recurrence()
+        function.
+
+        :n_terms: Number of terms to check.
+        :returns: A :class:`.CFinite` instance or None.
+
+        """
+        coeffs = self.find_linear_recurrence(n_terms)
+
+        if coeffs:
+            initial = list(itertools.islice(self.gen(), len(coeffs)))
+            return cfinite.CFinite(initial, coeffs)
+
+        return None
 
     def _eval_coeff(self, index):
         return self.get_terms(index + 1)[-1]
@@ -184,7 +203,7 @@ def pisot_to_cfinite(pisot, guess_length, check_length, verbose=False):
     if pisot.r <= 0 or pisot.r >= 1:
         raise ValueError("r must be strictly between 0 and 1 for this procedure")
 
-    c_seq = cfinite.find_cfinite_recurrence(pisot, guess_length)
+    c_seq = pisot.find_cfinite_recurrence(guess_length)
 
     vprint("The Pisot sequence E_{{{}}}({}, {}),".format(pisot.r, pisot.x, pisot.y), end=" ")
     vprint("whose first few terms are")
