@@ -203,7 +203,7 @@ def pisot_to_cfinite(pisot, guess_length, check_length, verbose=False):
 
     if c_seq.degree == 1:
         vprint("This C-finite sequence looks like a geometric sequence, so this is easier to check.")
-        vprint("The conjecture holds if x divides y, the guessed ratio equals y / x and r is in [0, 1).")
+        vprint("The conjecture holds if x divides y; the guessed ratio equals y / x; and r is in [0, 1).")
         vprint()
 
         vprint("We already know that r satisfies this.")
