@@ -86,6 +86,23 @@ Or, using the ``verbose`` flag::
     Therefore our conjecture holds.
     Out[10]: CFinite([5, 17], [4, -2])
 
+    In [11]: p = pisot.Pisot(8, 16, Rational(1, 2))
+
+    In [12]: pisot.pisot_to_cfinite(p, guess_terms, check_terms, verbose=True)
+    The Pisot sequence E_{1/2}(8, 16), whose first few terms are
+        [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
+    appears to satisfy the C-finite recurrence CFinite([8], [2]) whose first few terms are
+        [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
+
+    This C-finite sequence looks like a geometric sequence, so this is easier to check.
+    The conjecture holds if x divides y; the guessed ratio equals y / x; and r is in [0, 1).
+
+    We already know that r satisfies this.
+    The conjectured geometric sequence has ratio 2.
+
+    The ratio is an integer and equals y / x, so our conjecture holds.
+    Out[12]: CFinite([8], [2])
+
 Indices and tables
 ==================
 
