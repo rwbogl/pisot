@@ -7,11 +7,10 @@ Pisot Documentation
 ==============================================================================
 
 .. toctree::
-    :hidden:
+    :caption: Table of Contents
 
     implementation
     modules
-
 
 Pisot sequences are a family of recursive sequences defined by
 
