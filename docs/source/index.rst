@@ -33,12 +33,12 @@ of the uses of symbolic computation in languages more general than Maple.
 
 To use the package, ensure that `SymPy <http://www.sympy.org/en/index.html>`_
 is installed, then clone the `GitHub project
-<https://github.com/rwbogl/pisot>`_ (via ``git clone``, or downloading a ZIP
-file from the page, etc.). On the terminal, navigate to the directory that
-``pisot.py`` and ``cfinite.py`` are in, then open a Python terminal. After
-this, import the ``pisot`` module with :code:`import pisot` or some variant.
-Then every function defined in ``pisot.py`` will be available as
-``pisot.func_name``.
+<https://github.com/rwbogl/pisot>`_ (via ``git clone
+https://github.com/rwbogl/pisot.git``, or downloading a ZIP file from the page,
+etc.). On the terminal, navigate to the directory that ``pisot.py`` and
+``cfinite.py`` are in, then open a Python terminal. After this, import the
+``pisot`` module with :code:`import pisot` or some variant.  Then every
+function defined in ``pisot.py`` will be available as ``pisot.func_name``.
 
 Examples
 --------
